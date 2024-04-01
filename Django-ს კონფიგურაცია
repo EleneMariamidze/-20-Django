@@ -1,0 +1,76 @@
+#car/models.py
+from django.db import models
+
+class Car(models.Model):
+    make = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    year = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.year} {self.make} {self.model}"
+
+#animal/models.py
+from django.db import models
+
+class Animal(models.Model):
+    name = models.CharField(max_length=100)
+    species = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+#car/serializers.py
+from rest_framework import serializers
+from .models import Car
+
+class CarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Car
+        fields = '__all__'
+
+#animal/serializer.py
+from rest_framework import serializer
+from.models import Animal
+
+class AnimalSerializer (serializer.ModelSerializer):
+    class Meta:
+        model = Animal
+        fields = '__all__'
+
+#car/views.py
+from rest_framework import generics
+from .models import Car
+from .serializers import CarSerializer
+
+class CarListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+
+#car/urls.py
+from django.urls import path
+from .views import CarListCreateAPIView
+
+urlpatterns = [
+    path('', CarListCreateAPIView.as_view(), name='car-list-create')
+]
+
+#animal/views.py
+from rest_framework import generics
+from .models import Animal
+from .serializers import AnimalSerializer
+
+class AnimalListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Animal.objects.all()
+    serializer_class = AnimalSerializer
+
+#animal/urls.py
+from django.urls import path
+from .views import AnimalListCreateAPIView
+
+urlpatterns = [
+    path('', AnimalListCreateAPIView.as_view(), name='Animal-list-create')
+]
+
+#python manage.py makemigrations car
+#python manage.py makemigrations animal
+#python manage.py migrate
